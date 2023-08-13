@@ -2,6 +2,7 @@
 using Microsoft.EntityFrameworkCore;
 using ApplicationDatabaseContext;
 using SuperSoftPractice.Model;
+using Microsoft.DotNet.Scaffolding.Shared.Messaging;
 
 namespace SuperSoftPractice.Controllers
 {
@@ -48,13 +49,9 @@ namespace SuperSoftPractice.Controllers
         // PUT: api/Student/5
         // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
         [HttpPut("/Student/Update/{id}")]
-        public async Task<IActionResult> PutStudentModel(long id, StudentModel studentModel)
+        public async Task<IActionResult> PutStudentModel( StudentModel studentModel)
         {
-            if (id != studentModel.StudentId)
-            {
-                return BadRequest();
-            }
-
+           
             _context.Entry(studentModel).State = EntityState.Modified;
 
             try
@@ -63,7 +60,7 @@ namespace SuperSoftPractice.Controllers
             }
             catch (DbUpdateConcurrencyException)
             {
-                if (!StudentModelExists(id))
+                if (!StudentModelExists(studentModel.StudentId))
                 {
                     return NotFound();
                 }
@@ -73,7 +70,7 @@ namespace SuperSoftPractice.Controllers
                 }
             }
 
-            return NoContent();
+            return new JsonResult(new { message = "Record Updated Successfully" });
         }
 
         // POST: api/Student
@@ -108,7 +105,7 @@ namespace SuperSoftPractice.Controllers
             _context.StudentModel.Remove(studentModel);
             await _context.SaveChangesAsync();
 
-            return NoContent();
+            return new JsonResult (new { message = "Record Deleted Successfully"});
         }
 
         private bool StudentModelExists(long id)
